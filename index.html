@@ -122,7 +122,7 @@
 
   <model-viewer
     id="viewer"
-    src="./prototipo_1.glb"
+    src="Protótipo_1.glb"
     camera-controls
     disable-pan
     auto-rotate
@@ -138,18 +138,11 @@
   </model-viewer>
 
   <script>
-    const models = [
-      { file: "./prototipo_1.glb" },
-      { file: "./prototipo_2.glb" }
-    ];
-
     const viewer = document.getElementById("viewer");
     let activeBtn = document.querySelector(".sw-btn.active");
 
-    function loadModel(index, btn) {
-      const model = models[index];
-
-      viewer.setAttribute("src", model.file);
+    function loadModel(file, btn) {
+      viewer.setAttribute("src", file);
 
       if (activeBtn) {
         activeBtn.classList.remove("active");
