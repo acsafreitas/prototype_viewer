@@ -4,12 +4,19 @@
   <meta charset="UTF-8">
   <title>Pepper's Ghost — Visualizador de Protótipos</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
     html, body {
-      width: 100%; height: 100%;
+      width: 100%;
+      height: 100%;
       background: #f0ede8;
       font-family: 'Segoe UI', Arial, sans-serif;
       color: #1a1a1a;
@@ -24,7 +31,6 @@
       --progress-bar-color: transparent;
     }
 
-    /* Esconder controlos nativos do model-viewer */
     model-viewer::part(default-ar-button),
     model-viewer::part(default-progress-bar) {
       display: none;
@@ -32,7 +38,9 @@
 
     #header {
       position: fixed;
-      top: 0; left: 0; right: 0;
+      top: 0;
+      left: 0;
+      right: 0;
       z-index: 200;
       display: flex;
       align-items: center;
@@ -40,7 +48,7 @@
       padding: 16px 28px;
       background: rgba(240, 237, 232, 0.85);
       backdrop-filter: blur(10px);
-      border-bottom: 0.5px solid rgba(0,0,0,0.1);
+      border-bottom: 0.5px solid rgba(0, 0, 0, 0.1);
     }
 
     #header .logo-title {
@@ -49,6 +57,7 @@
       letter-spacing: 1px;
       color: #1a1a1a;
     }
+
     #header .logo-sub {
       font-size: 11px;
       color: #888;
@@ -56,11 +65,14 @@
       letter-spacing: 0.5px;
     }
 
-    #switcher { display: flex; gap: 8px; }
+    #switcher {
+      display: flex;
+      gap: 8px;
+    }
 
     .sw-btn {
       padding: 8px 20px;
-      border: 1px solid rgba(0,0,0,0.15);
+      border: 1px solid rgba(0, 0, 0, 0.15);
       border-radius: 8px;
       background: white;
       color: #555;
@@ -68,11 +80,13 @@
       cursor: pointer;
       transition: all 0.2s;
     }
+
     .sw-btn:hover {
       background: #e8e4de;
       color: #1a1a1a;
-      border-color: rgba(0,0,0,0.25);
+      border-color: rgba(0, 0, 0, 0.25);
     }
+
     .sw-btn.active {
       background: #1a1a1a;
       color: white;
@@ -80,67 +94,88 @@
     }
 
     @media (max-width: 600px) {
-      #header { padding: 12px 16px; }
-      .sw-btn { padding: 7px 14px; font-size: 12px; }
+      #header {
+        padding: 12px 16px;
+      }
+
+      .sw-btn {
+        padding: 7px 14px;
+        font-size: 12px;
+      }
     }
   </style>
 </head>
+
 <body>
 
-<div id="header">
-  <div>
-    <div class="logo-title">Pepper's Ghost</div>
-    <div class="logo-sub">Visualizador de Protótipos</div>
+  <div id="header">
+    <div>
+      <div class="logo-title">Pepper's Ghost</div>
+      <div class="logo-sub">Visualizador de Protótipos</div>
+    </div>
+
+    <div id="switcher">
+      <button class="sw-btn active" onclick="loadModel(0, this)">Protótipo 1</button>
+      <button class="sw-btn" onclick="loadModel(1, this)">Protótipo 2</button>
+    </div>
   </div>
-  <div id="switcher">
-    <button class="sw-btn active" onclick="loadModel(0, this)">Protótipo 1</button>
-    <button class="sw-btn"        onclick="loadModel(1, this)">Protótipo 2</button>
-  </div>
-</div>
 
-<model-viewer
-  id="viewer"
-  camera-controls
-  disable-pan
-  auto-rotate
-  auto-rotate-delay="800"
-  rotation-per-second="10deg"
-  min-field-of-view="15deg"
-  max-field-of-view="60deg"
-  exposure="1.6"
-  shadow-intensity="1"
-  shadow-softness="0.8"
-  tone-mapping="commerce"
-  environment-image="legacy">
-</model-viewer>
+  <model-viewer
+    id="viewer"
+    src="./prototipo_1.glb"
+    camera-controls
+    disable-pan
+    auto-rotate
+    auto-rotate-delay="800"
+    rotation-per-second="10deg"
+    min-field-of-view="15deg"
+    max-field-of-view="60deg"
+    exposure="1.6"
+    shadow-intensity="1"
+    shadow-softness="0.8"
+    tone-mapping="commerce"
+    environment-image="legacy">
+  </model-viewer>
 
-<script>
-  const models = [
-    { file: "./Protótipo_1.glb" },
-    { file: "./Protótipo2_1.glb" },
-  ];
+  <script>
+    const models = [
+      { file: "./prototipo_1.glb" },
+      { file: "./prototipo_2.glb" }
+    ];
 
-  const viewer  = document.getElementById("viewer");
-  let activeBtn = document.querySelector(".sw-btn.active");
+    const viewer = document.getElementById("viewer");
+    let activeBtn = document.querySelector(".sw-btn.active");
 
-  function loadModel(index, btn) {
-    const m = models[index];
-    viewer.setAttribute("src", m.file);
-    if (activeBtn) activeBtn.classList.remove("active");
-    btn.classList.add("active");
-    activeBtn = btn;
-  }
+    function loadModel(index, btn) {
+      const model = models[index];
 
-  // Esconder hint de interação do shadow DOM após carregar
-  viewer.addEventListener("load", () => {
-    const shadow = viewer.shadowRoot;
-    if (shadow) {
-      const hint = shadow.querySelector(".interaction-prompt");
-      if (hint) hint.style.display = "none";
+      viewer.setAttribute("src", model.file);
+
+      if (activeBtn) {
+        activeBtn.classList.remove("active");
+      }
+
+      btn.classList.add("active");
+      activeBtn = btn;
     }
-  });
 
-  viewer.setAttribute("src", models[0].file);
-</script>
+    viewer.addEventListener("load", () => {
+      console.log("Modelo carregado:", viewer.getAttribute("src"));
+
+      const shadow = viewer.shadowRoot;
+      if (shadow) {
+        const hint = shadow.querySelector(".interaction-prompt");
+        if (hint) {
+          hint.style.display = "none";
+        }
+      }
+    });
+
+    viewer.addEventListener("error", (event) => {
+      console.error("Erro ao carregar modelo:", event);
+      console.log("Modelo que falhou:", viewer.getAttribute("src"));
+    });
+  </script>
+
 </body>
 </html>
