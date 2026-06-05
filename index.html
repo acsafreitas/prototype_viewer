@@ -21,7 +21,13 @@
       height: 100vh;
       background-color: transparent;
       --poster-color: transparent;
-      --progress-bar-color: #555;
+      --progress-bar-color: transparent;
+    }
+
+    /* Esconder controlos nativos do model-viewer */
+    model-viewer::part(default-ar-button),
+    model-viewer::part(default-progress-bar) {
+      display: none;
     }
 
     #header {
@@ -124,6 +130,15 @@
     btn.classList.add("active");
     activeBtn = btn;
   }
+
+  // Esconder hint de interação do shadow DOM após carregar
+  viewer.addEventListener("load", () => {
+    const shadow = viewer.shadowRoot;
+    if (shadow) {
+      const hint = shadow.querySelector(".interaction-prompt");
+      if (hint) hint.style.display = "none";
+    }
+  });
 
   viewer.setAttribute("src", models[0].file);
 </script>
